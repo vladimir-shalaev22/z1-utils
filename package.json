@@ -1,0 +1,23 @@
+{
+  "name": "z1-utils",
+  "version": "0.1.0",
+  "description": "Helpers for Redux and etc",
+  "main": "index.js",
+  "repository": "https://github.com/vladimir-shalaev22/z1-utils",
+  "author": "Vladimir Shalaev",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0"
+  },
+  "dependencies": {
+    "cuid": "^2.1.6",
+    "rxjs": "^6.5.3"
+  }
+}
