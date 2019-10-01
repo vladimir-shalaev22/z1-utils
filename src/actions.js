@@ -1,40 +1,60 @@
 import cuid from 'cuid'
 
-// Статусы для многоэтапных экшенов (например для fetch-запросов)
-// Константы начинаются с префикса "status/" для того чтобы можно
-// было их отличить от значений обычных переменных
+/** @module utils/actions */
 
+// Status constants for multistage actions (i.e. fetch-requests)
+// All consts starts with prefix "status/". Method makeActionCreator
+// need the way to distinguish status values from other
+
+/** @typedef {string} ActionStatus */
+
+/** @const {ActionStatus} - Declarates that operation done */
 export const SUCCESS = 'status/success'
+
+/** @const {ActionStatus} - Declarates that operation failed */
 export const ERROR = 'status/error'
 
-// Функция для создания экшн-креаторов (функции создающие экшены)
-// Параметр: {string} type - тип экшена
-// Параметр: {Array} params - имена параметров, необходимо для того
-// чтобы именовать переданные экшен креатору аргументы. Пример:
-// const actionCreator = makeActionCreator('test/creator', ['sun', 'moon'])
-// console.log(actionCreator('star', 'satellite'))
-// >> {
-// >>   type: 'test/creator',
-// >>   payload: {
-// >>     sun: 'start',
-// >>     moon: 'satellite'
-// >>   }
-// >> }
-// !!!ПРИМЕЧАНИЕ!!! Если params не задан, то в качестве payload передаётся
-// первый аргумент. Остальные будут игнорироваться! Если и первый аргумент
-// не задан, то тогда payload в экшене будет отсутствовать!
-// --------------------------------------------------------------------------
-// Пример использования экшн-креатора со статусом:
-// console.log(actionCreator(SUCCESS, {location: 'universe'}))
-// >> {
-// >>   type: 'test/creator',
-// >>   payload: {
-// >>     location: 'universe'
-// >>   }
-// >> }
-// В данном случае в качестве полезной нагрузки (payload) идёт
-// второй параметр. Первый параметр - статус.
-// Все последующие параметры игнорируются
+/**
+ * @callback actionCreator
+ * @param {(ActionStatus|...*)} statusOrParams - статус или параметры
+ * @param {*} [payload] - полезная нагрузка (если указан статус)
+ */
+
+/**
+ * Function that make action creator with a given type and params
+ * @param {string} type - redux action type
+ * @param {string[]} params - a list of params' names
+ * @param {boolean} [withId] - generate id or not
+ * @return {actionCreator} action creator
+ * @example <caption>Make action creator with params</caption>
+ * const actionCreator = makeActionCreator('test/creator', ['sun', 'moon'])
+ * actionCreator('star', 'satellite')
+ * // Returns:
+ * // {
+ * //   type: 'test/creator',
+ * //   payload: {
+ * //     sun: 'start',
+ * //     moon: 'satellite'
+ * //   }
+ * // }
+ * @example <caption>Make action creator without params</caption>
+ * const actionCreator = makeActionCreator('test/creator')
+ * actionCreator('star', 'satellite')
+ * // Returns:
+ * // {
+ * //   type: 'test/creator',
+ * //   payload: 'star'
+ * // }
+ * @example <caption>Make action creator with status</caption>
+ * const actionCreator = makeActionCreator('test/creator', ['sun', 'moon'])
+ * actionCreator('status/success', {items: [1, 2, 3], total: 3})
+ * // Returns:
+ * // {
+ * //   type: 'test/creator',
+ * //   status: 'status/success',
+ * //   payload: {items: [1, 2, 3], total: 3}
+ * // }
+ */
 
 export function makeActionCreator(type, params, withId = false) {
   return (...args) => {
@@ -45,33 +65,7 @@ export function makeActionCreator(type, params, withId = false) {
   }
 }
 
-// Функция возвращающая функцию для проверки экшенов
-// на соответствии заданным типу (type) и статусу (status)
-// Проверяющая функция возвращает "true" только в том случае,
-// если и тип и статус соответствуют заданным (соответствия только одного
-// параметра недостаточно). Используется в эпиках (Epics)
-
-export function withTypeAndStatus(type, status) {
-  return (action) => (
-    action.status === status &&
-    action.type === type
-  )
-}
-
-// Функция возвращающая функцию для проверки экшенов
-// на соответствие заданному типу (type) и отсутствие статуса
-// Проверяющая функция возвращает "true" только в том случае,
-// если тип соответствует заданному, а статус не задан.
-// Используется в эпиках (Epics)
-
-export function withTypeWithoutStatus(type) {
-  return (action) => (
-    typeof action.status === 'undefined' &&
-    action.type === type
-  )
-}
-
-// ======================= Вспомогательные функции ========================= //
+// =========================== Helper functions ============================ //
 
 function isStatusParam(param) {
   return typeof param === 'string' && param.startsWith('status/')

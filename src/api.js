@@ -3,11 +3,16 @@ import {of} from 'rxjs'
 import {ajax} from 'rxjs/ajax'
 import {map, delay} from 'rxjs/operators'
 
-// Подготавливает параметры для строки запроса
-// Параметр: {Object} params - входные параметры
-// Возвращаемое значение: {String}
-// Пример: encodeQueryParams({sun: 1000, moon: 70})
-// >> "sun=1000&moon=70"
+/** @module utils/api */
+
+/**
+ * Encode params to pass them using URL
+ * @param {Object} params - params to be encoded
+ * @return {String} string with url-encoded params
+ * @example
+ * // Returns: sun=1000&moon=70
+ * encodeQueryParams({sun: 1000, moon: 70})
+ */
 
 export function encodeQueryParams(params) {
   return Object.getOwnPropertyNames(params)

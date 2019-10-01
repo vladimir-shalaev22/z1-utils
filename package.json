@@ -8,9 +8,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "test": "jest --watch"
+    "build": "babel src -d dist --ignore 'src/**/*.test.js'",
+    "test": "jest --watch",
+    "makedoc": "jsdoc src -r -d docs"
   },
   "devDependencies": {
+    "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "babel-jest": "^24.9.0",
